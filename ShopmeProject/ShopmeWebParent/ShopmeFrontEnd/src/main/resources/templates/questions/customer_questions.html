@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments::page_head('My Reviews','none')"></head>
+<body>
+      <div class="container-fluid">
+           <div th:replace="navigation::header_menu"></div>
+           <div th:replace="navigation::search_nav"></div>
+            <div>
+                 <h2>Questions Post By Me</h2>
+            </div>
+            
+            <div th:replace="fragments :: search_form"></div>
+            
+            <div>
+                 <table class="table table-bordered table-striped table-hover table-responsive-xl"  >
+                        <thead class="thead-dark">
+                               <th th:replace="fragments :: column_link('id','ID','none') "/>
+                               <th th:replace="fragments :: column_link('product','Product','none') "/>
+                               <th th:replace="fragments :: column_link('questionContent','Question','none') "/>
+                               <th th:replace="fragments :: column_link('askTime','Ask Time','none') "/>
+                               <th th:replace="fragments :: column_link('approved','Approved','none') "/>
+                               <th>Answered</th>
+                               <th></th>
+                        </thead>
+                        <tbody>
+                               <tr th:each="question : ${listQuestions}">
+                                     <td>[[${question.id}]]</td>
+                                     <td>
+                                         <a th:href="@{${question.product.URI}}" target="_blank" th:title="${question.product.name}">[[${question.product.shortName}]]</a>
+                                     </td>
+                                     <td>[[${question.questionContent}]]</td>
+                                     <td>[[${question.askTime}]] <i class="far fa-star"></i></td>
+                                     <td>
+                                         <span class="fa-solid fa-2x" th:classappend="${question.approved ? 'fa-check-circle icon-green' : 'fa-circle icon-dark'}"></span>
+                                     </td>
+                                     <td>
+                                         <span class="fa-solid fa-2x" th:classappend="${question.answered? 'fa-check-circle icon-green' : 'fa-circle icon-dark'}"></span>
+                                     </td>
+                                     <td>
+                                           <a class="fa-solid fa-file-alt fa-2x icon-green link-detail-review"
+                                              th:href="@{'/customer/questions/detail/' + ${question.id}}"
+                                              title="View details of this review"
+                                           >
+                                              
+                                           
+                                           </a>
+                                     </td>
+                               </tr> 
+                        </tbody>
+                 </table>
+            
+            </div>
+      </div>
+      
+      
+	  
+      <div th:replace="fragments :: pagination('/customer/questions', 'reviews')"></div>
+      <div class="modal fade" id="questionDetailModal">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content"></div>
+			</div>
+		</div>
+      <div th:replace="navigation :: footer_menu"></div>
+      <script th:src="@{/js/common_list.js}"></script>
+      <script type="text/javascript">
+            moduleURL = "[[@{/customer/questions}]]";
+            $(document).ready(function () {
+            	$(document).ready(function () {
+        			handleDetailLink(".link-detail-review", "#questionDetailModal");
+        		});
+    		});
+            
+           
+      </script>
+</body>
+</html>

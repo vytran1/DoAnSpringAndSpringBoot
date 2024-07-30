@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::page_head('Menu Items-Admin','none')"></head>
+<body>
+      <div class="container-fluid">
+           <div th:replace="navigation::menu"></div>
+           <div>
+               <h2>Manage Menus </h2>
+               <a th:href="@{/menus/new}" class="fa-solid fa-folder-plus fa-2x icon-dark"></a>
+         </div>
+          
+        <div th:if="${message != null}" class="alert alert-success text-center">
+           [[${message}]]
+        </div>
+          
+          
+          <div class="full-details">
+               <table class="table table-bordered table-striped table-hover table-responsive-xl"  >
+                      <thead class="thead-dark">
+                            <tr> 
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th class="hideable-column">Article</th>
+                                <th>Enabled</th>
+                                <th>Position</th>
+                                <th></th>
+                            </tr>
+                     </thead>
+                     <tbody>
+                           <tr th:each="menu:${listMenuItems}"> 
+                                <td>[[${menu.id}]]</td>
+                                <td>[[${menu.title}]]</td>
+                                <td>[[${menu.type}]]</td>
+                                <td class="hideable-column"> 
+                                    <a th:href="@{'/articles/detail/' + ${menu.article.id}}" class="link-detail" th:title="${menu.article.title}">[[${menu.article.title}]]</a>
+                                </td>
+                                <td>
+                                    <div th:replace="fragments :: status(${menu.enabled}, 'menu item', '/menus/' + ${menu.id})" />
+                                </td>
+                                <td>
+                                    <a th:href="@{'/menus/up/' + ${menu.id}}" class="fas fa-chevron-up fa-2x" title="Move this menu item up"></a>
+                                    <span class="m-3">[[${menu.position}]]</span>
+                                    <a th:href="@{'/menus/down/' + ${menu.id}}" class="fas fa-chevron-down fa-2x" title="Move this menu item down"></a>
+                                </td>
+                                <td>
+                                    <div th:replace="fragments::edit('menu item','/menus/edit/' + ${menu.id})"/>
+                                    &nbsp;
+                                    <div th:replace="fragments::delete('menu item',${menu.id},'/menus/delete/' + ${menu.id},true)"/>
+                                </td>
+                           </tr>
+                     
+                     </tbody>
+               </table>
+          </div>
+          
+          
+      </div>
+      
+      <div th:replace="modal_fragments:: confirm_modal"></div>
+      
+      
+      
+      
+      <div th:replace="fragments::footer"></div>
+      
+      <script th:src="@{/js/common2.js}"></script>
+      <script type="text/javascript">
+       moduleURL = "[[@{/menus}]]";
+       entityName = "article";
+      
+      
+      </script>
+</body>
+</html>

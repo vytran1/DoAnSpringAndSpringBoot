@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::page_head('Articles-Admin','none')"></head>
+<body>
+      <div class="container-fluid">
+           <div th:replace="navigation::menu"></div>
+           <div>
+               <h2>Manage Articles </h2>
+               <a th:href="@{/articles/new}" class="fa-solid fa-folder-plus fa-2x icon-dark"></a>
+         </div>
+          
+           <div th:if="${message != null}" class="alert alert-success text-center">
+           [[${message}]]
+        </div>
+          <div th:replace="fragments::search_form"></div>
+          
+          
+          <div class="full-details">
+               <table class="table table-bordered table-striped table-hover table-responsive-xl"  >
+                      <thead class="thead-dark">
+                            <tr> 
+                                 <th th:replace="fragments :: column_link('id','ID','none') "/>
+                                 <th th:replace="fragments :: column_link('title','Title','none') "/>
+                                 <th class="hideable-column">
+                                     <th th:replace="fragments :: column_link('type','Type','tag') "/>
+                                 </th>
+                                 <th th:replace="fragments :: column_link('user','Created by','none') "/>
+                                 <th class="hideable-column">
+                                     <th th:replace="fragments :: column_link('updatedTime','Updated Time','tag') "/>
+                                 </th>
+                                 <th th:replace="fragments :: column_link('published','Published','none') "/>
+                                <th></th>
+                            </tr>
+                     </thead>
+                     <tbody>
+                           <tr th:each="article:${listArticles}"> 
+                                 <td >[[${article.id}]]</td>
+                                 <td >[[${article.title}]]</td>
+                                 <td class="hideable-column">[[${article.type}]]</td>
+                                 <td>[[${article.user.fullName}]]</td>
+                                 <td class="hideable-column"><div th:replace="fragments :: format_time(${article.updatedTime})"></div></td>
+                                 <td>
+                                    <div th:replace="fragments :: status(${article.published}, 'article', '/articles/' + ${article.id})" />
+                                 </td>
+                                 <td>
+                                    <a class="fa-solid fa-file-alt fa-2x icon-green link-detail" th:href="@{'/articles/detail/' + ${article.id}}" title="view details article"></a>
+                                    &nbsp;
+                                    <div th:replace="fragments::edit('article','/articles/edit/' + ${article.id})"/>
+                                    &nbsp;
+                                    <div th:replace="fragments::delete('article',${article.id},'/articles/delete/' + ${article.id},true)"/>
+                                 </td>
+                           </tr>
+                     
+                     </tbody>
+               </table>
+          </div>
+          
+          
+      </div>
+      <div th:replace="fragments::pagination('article')"></div> 
+      <div th:replace="modal_fragments:: confirm_modal"></div>
+      
+       <div class="modal fade" id="detailModal">
+           <div class="modal-dialog modal-xl">
+                 <div class="modal-content">
+                 
+                 </div>
+           </div> 
+      </div>
+      
+      
+      <div th:replace="fragments::footer"></div>
+      
+      <script th:src="@{/js/common2.js}"></script>
+      <script type="text/javascript">
+       moduleURL = "[[@{/articles}]]";
+       entityName = "article";
+      
+       $(document).ready(function(){
+    	   handleDefaultDetailLinkClick();
+       });
+      
+      </script>
+</body>
+</html>

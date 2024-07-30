@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('My Order','none')"> </head>
+<body>
+      <div class="container-fluid">
+           <div th:replace="navigation::header_menu"></div>
+           <div th:replace="navigation::search_nav"></div>
+           
+           <div>
+              <h2>My Orders</h2>
+           </div>
+           <div th:replace="fragments :: search_form"></div>
+           <div>
+                <table class="table table-bordered table-striped table-hover table-responsive-xl">
+                      <thead  class="thead-dark">
+                              <th th:replace="fragments :: column_link('id', 'ID', 'none')" />
+                              <th th:replace="fragments :: column_link('orderTime', 'Order Time', 'none')" />
+                              <th>Products</th>
+                              <th th:replace="fragments :: column_link('total', 'Total', 'none')" />
+                              <th th:replace="fragments :: column_link('orderStatus', 'Status', 'none')" />
+                              <th></th>
+                      </thead>
+                      <tbody>
+                             <tr th:each="order : ${listOrders}"> 
+                                  <td th:text="${order.id}">ID</td>
+                                  
+                                  <td>
+							         <div th:replace="fragments :: format_time(${order.orderTime})">
+							               Order Time
+								     </div>
+						          </td>
+						          
+                                  <td th:utext="${order.productNames}"></td> 
+                                  
+                                  <td>
+							            <div th:replace="fragments :: format_currency(${order.total})">Total</div>
+						         </td>
+                                 
+                                 <td><span th:class="'textOrderStatus' + ${order.id}">[[${order.orderStatus}]]</span></td>
+                                 
+                                 <td>
+                                     <a class="fas fa-file-alt fa-2x icon-green linkDetail"
+                                        th:href="@{'/orders/detail/' + ${order.id}}"
+                                        title="View details of this order"
+                                     >
+                                     </a>
+                                     <th:block
+                                        th:if="${order.returnRequested == false && order.delivery == true && order.returned == false}"
+                                     >
+                                        &nbsp;&nbsp;&nbsp;
+                                        <a class="fa-solid fa-undo fa-2x icon-dark linkReturnOrder" href=""
+                                           th:classappend="'linkReturn' + ${order.id}"
+                                           th:orderId="${order.id}" title="Return this order"
+                                        >
+                                            
+                                        </a>   
+                                     
+                                     </th:block>
+                                 </td>
+                             </tr>
+                      
+                      </tbody>
+                </table>
+           
+           
+           </div>
+           <div th:replace="fragments :: pagination('/orders', 'orders')"></div>
+           <div th:replace="orders/return_order_modal :: content"></div>
+           
+           
+           <div class="modal fade" id="orderDetailsModal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content"></div>
+			</div>
+		</div>
+           <div th:replace="navigation :: footer_menu"></div>
+      </div>
+<script type="text/javascript">
+     moduleURL = "[[@{/orders}]]";
+     contextPath = "[[@{/}]]";
+     var csrfHeaderName = "[[${_csrf.headerName}]]";
+     var csrfValue = "[[${_csrf.token}]]";
+     function clearFilter(){
+    	 window.location = moduleURL;
+     }
+     
+     $(document).ready(function(){
+    	 handleDetailLink();
+     })
+     function handleDetailLink(){
+    	 $(".linkDetail").on("click",function(e){
+    		 e.preventDefault();
+    		 $("#orderDetailsModal").modal("show").find(".modal-content").load($(this).attr("href"));
+    	 });
+     }
+</script>
+<script th:src="@{/js/return_order.js}"></script>      
+</body>
+</html>

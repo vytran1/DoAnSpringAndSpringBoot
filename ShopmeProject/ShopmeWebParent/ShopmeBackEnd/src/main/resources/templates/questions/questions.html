@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments::page_head('Questions-Listing Admin','none')"></head>
+<body>
+      <div class="container-fluid">
+            <div th:replace="navigation :: menu"></div>
+            <div>
+                 <h2>Manage Questions</h2>
+            </div>
+            
+            <div th:replace="fragments :: search_form"></div>
+            
+            <div>
+                 <table class="table table-bordered table-striped table-hover table-responsive-xl"  >
+                        <thead class="thead-dark">
+                               <th th:replace="fragments :: column_link('id','ID','none') "/>
+                               <th th:replace="fragments :: column_link('product','Product','none') "/>
+                               <th th:replace="fragments :: column_link('questionContent','Question','none') "/>
+                               <th th:replace="fragments :: column_link('asker', 'Asker', 'none')" />
+                               <th th:replace="fragments :: column_link('askTime', 'Ask Time', 'none')" /> 
+                               <th th:replace="fragments :: column_link('approved', 'Approved', 'none')" />
+                               <th></th>
+                        </thead>
+                        <tbody>
+                               <tr th:each="question : ${listQuestions}">
+                                     <td>[[${question.id}]]</td>
+                                     <td>
+                                         <a th:href="@{'/products/detail/' + ${question.product.id}}" class="link-detail-product">
+                                            [[${question.product.shortName}]]
+                                         </a>
+                                     </td>
+                                      <td>
+                                         <a th:href="@{'/customers/detail/' + ${question.asker.id}}" class="link-detail-customer">
+                                            [[${question.asker.fullName}]]
+                                         </a>
+                                     </td>
+                                     <td><div th:replace="fragments :: format_time(${question.askTime})"></div></td>
+                                     <td>
+                                         <a th:if="${question.approved == true}" class="fas fa-check-circle fa-2x icon-green"
+							                th:href="@{'/questions/' + ${question.id} + '/disapprove'}"
+							                title="Disapprove this question"
+							             >  </a>
+							             
+							             
+							             <a th:unless="${question.approved == true}" class="fas fa-circle fa-2x icon-dark"
+							                th:href="@{'/questions/' + ${question.id} + '/approve'}"
+							                title="Approve this question"
+							             > </a> 
+                                       
+                                     </td>
+                                     <td class="hideable-column">
+                                        <span class="fas fa-2x"	th:classappend="${question.answered ? 'fa-check-circle icon-green' : 'fa-circle icon-dark'}"></span>
+                                     </td>
+                                     <td>
+                                           <a class="fa-solid fa-file-alt fa-2x icon-green link-detail-review"
+                                              th:href="@{'/questions/detail/' + ${question.id}}"
+                                              title="View details of this review"
+                                           >
+                                              
+                                           
+                                           </a>
+                                           
+                                           <th:block >
+                                               <div th:replace="fragments::edit('question','/questions/edit/' + ${question.id})"/>
+                                           </th:block>
+                                           
+                                          
+                                           <div th:replace="fragments::delete('question',${question.id},'/questions/delete/' + ${question.id},true)"/>
+                                           
+                                     </td>
+                               </tr> 
+                        </tbody>
+                 </table>
+            
+            </div>
+      </div>
+      <div th:replace="modal_fragments:: confirm_modal"></div>
+      <div class="modal fade" id="xlargeModal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content"></div>
+			</div>
+	  </div>
+	  <div class="modal fade" id="largeModal">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content"></div>
+			</div>
+		</div>
+      <div th:replace="fragments::pagination('questions')"></div> 
+      <div th:replace="fragments::footer"></div>
+      <script th:src="@{/js/common_list.js}"></script>
+      <script type="text/javascript">
+            moduleURL = "[[@{/reviews}]]";
+            $(document).ready(function () {
+    			handleDeleteLink();
+    			handleProductDetailLink();
+    			handleCustomerDetailLink();
+    			handleReviewDetailLink();
+    		});
+            
+            function handleDeleteLink() {
+    			$(".link-delete").on("click", function (e) {
+    				e.preventDefault();
+    				showDeleteConfirmModal($(this), 'question');
+    			});
+    		}
+            function handleDetailLinkClick(cssClass, modalId) {
+    			$(cssClass).on("click", function (e) {
+    				e.preventDefault();
+    				linkDetailURL = $(this).attr("href");
+    				$(modalId).modal("show").find(".modal-content").load(linkDetailURL);
+    			});
+    		}
+            function handleProductDetailLink() {
+    			handleDetailLinkClick(".link-detail-product", "#xlargeModal");
+    		}
+            function handleCustomerDetailLink() {
+    			handleDetailLinkClick(".link-detail-customer", "#largeModal");
+    		}
+            function handleReviewDetailLink() {
+    			handleDetailLinkClick(".link-detail-review", "#largeModal");
+    		}	
+      </script>
+</body>
+</html>

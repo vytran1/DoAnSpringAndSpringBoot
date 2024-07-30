@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+     <div th:fragment="content(statusVar,statusName,iconName)"  class="col">  
+          
+                                    <!-- Start -->
+                                    <th:block th:if="${statusVar}">
+                                           
+                                           <i th:class="'fa-solid '   +  ${iconName} + ' fa-2x icon-green'"></i>
+                                   </th:block>
+                                   <th:block th:unless="${statusVar}">
+                                                    <a th:class="'fa-solid ' + ${iconName}  + ' fa-2x icon-dark linkUpdateStatus'"
+                                                        th:orderId="${order.id}"
+                                                        th:id="'link' + ${statusName} + ${order.id}"
+                                                        th:status="${statusName}"
+                                                        th:href="@{'/orders_shipper/update/' + ${order.id} + '/' + ${statusName}}"
+                                                    >
+                                                    
+                                                    </a>
+                                 </th:block>
+                                                 <!-- End -->
+                                                 
+                                                 
+                                                 
+        
+     
+     </div>
+</body>
+</html>

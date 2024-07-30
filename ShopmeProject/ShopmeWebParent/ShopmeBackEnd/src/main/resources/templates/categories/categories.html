@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::page_head('Categories Listing Admin','none')"></head>
+<body>
+    <div class="container-fluid">
+         <div th:replace="navigation::menu"></div>
+         <div>
+               <h2>Manage Categories </h2>
+               <a th:href="@{/categories/new}" class="fa-solid fa-folder-plus fa-2x icon-dark"></a>
+               <a th:href="@{/categories/export/csv}" class="fa-solid fa-file-csv fa-2x"></a>
+         </div>
+           <div th:if="${message != null}" class="alert alert-success text-center">
+           [[${message}]]
+        </div>
+        <!--  
+          <div>
+               <form th:action="@{/categories/page/1}" class="form-inline">
+                      Filter &nbsp;
+                     <input type="search" name="keyWord" th:value="${keyWord}" class="form-control" />
+                      &nbsp;&nbsp;
+                     <Button type="submit"  class="btn btn-primary" > 
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                     </Button>
+                       &nbsp;&nbsp;
+                  <Button type="button"  class="btn btn-secondary" onClick="clearFilter()" >
+                       <i class="fa-solid fa-eraser"></i>
+                   </Button>
+               </form>
+          </div>
+           -->
+            <div th:replace="fragments::search_form">
+        </div>
+          <div class="full-details">
+               <table class="table table-bordered table-striped table-hover table-responsive-xl">
+                    <thead class="thead-dark">
+                            <tr> 
+                                <th>ID</th>
+                                <th>Category Image</th>
+                                <th th:replace="fragments :: column_link('name','Category Name','none') "/> 
+                                <th class="hideable-column">Alias</th>
+                                <th>Enabled</th>
+                                <th></th>
+                            </tr>
+                     </thead>
+                     <tbody>
+                           <tr th:each="category:${listCategories}"> 
+                                 <td class="hideable-column">[[${category.id}]]</td>
+                                 <td> 
+                                   
+                                   <img alt="" th:src="@{${category.imagePath}}" style="width:100px" class="img-fluid" />
+                                 
+                                 </td>
+                                 <td class="hideable-column">[[${category.name}]]</td>
+                                 <td class="hideable-column">[[${category.alias}]]</td>
+                                 <td>
+                                    <div th:replace="fragments :: status(${category.enabled}, 'category', '/categories/' + ${category.id})" />
+                                 </td>
+                                 <td> 
+                                    <div th:replace="fragments::edit('category','/categories/edit/' + ${category.id})"/>
+                                    <div
+                                     
+                                     th:replace="fragments::delete('category',${category.id},'/categories/delete/' + ${category.id},${category.hasChildren == false})"
+                                     
+                                     />
+                                 </td>
+                           </tr>
+                     </tbody>
+                </table>
+          </div>
+          <div th:if="${keyWord != null}" class="text-center">
+             <span>Search result does not show categories in hierarchical form</span>
+             <div th:replace="fragments::pagination('categories')"></div>
+          </div>
+          <th:block th:unless="${keyWord != null}"> 
+              <div th:replace="fragments::pagination('top-level categories')"></div> 
+          </th:block>
+         
+          <div th:replace="modal_fragments:: confirm_modal"></div>
+          <div th:replace="fragments::footer"></div>
+    </div>
+    <script th:src="@{/js/common.js}"></script>
+    <script type="text/javascript">
+    
+    function clearFilter(){
+ 	   window.location = "[[@{/categories}]]";
+    }
+    
+    $(document).ready(function(){
+    	$(".link-delete").on("click",function(e){
+    		e.preventDefault();
+    		showDeteleConfirmModal($(this),'category');
+    	});
+    });
+    </script>
+</body>
+</html>

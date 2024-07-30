@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div>
+            <p> 
+               Use this page to manage states/countries which will be displayed in the customer registration form click 
+               Click load countries first
+            </p>
+        </div>
+        <div>
+            <input type="text" value="Click load countries list" id="buttonLoadCountriesForStates" class="btn btn-primary m-2">
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Selected Country</label>
+            <div class="col-sm-10">
+              <select class="form-control m-2" style="height:300px" size="3" id="dropDownCountriesForStates"> 
+                  
+              </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">All States/Provinces</label>
+            <div class="col-sm-10">            
+                <select class="form-control m-2" style="height:400px" size="3" id="dropDownStates"> 
+                  
+                </select>
+            </div>
+        </div>
+        <form id="formState">
+        <div class="form-group row">
+             <label class="col-form-label mt-2" id="labelStateName">State/Province Name: </label>
+             <div class="col-sm-6">
+                  <input type="text" class="form-control mt-2" id="fieldStateName" required="required" minlength="3" maxlength="45">
+             </div>
+             <div class="col-lg-4 mt-2">
+                  <input type="button" id="buttonAddState" class="btn btn-secondary mr-2" value="New">
+                  <input type="button" id="buttonDeleteState" class="btn btn-secondary mr-2" value="Delete" disabled="disabled">
+                  <input type="button" id="buttonUpdateState" class="btn btn-secondary mr-2" value="Update" disabled="disabled">
+             </div>
+        </div>
+        </form>
+    </div>
+</body>
+</html>

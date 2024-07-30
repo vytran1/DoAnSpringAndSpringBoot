@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::page_head('Customer Managment','none')"></head>
+<body>
+    <div class="container-fluid">
+        <div th:replace="navigation::menu"></div>
+        <div>
+               <h2>Manage Customers </h2>
+               <a th:href="@{/customers/export/csv}" class="fa-solid fa-file-csv fa-2x"></a>
+         </div>
+         
+         <div th:replace="fragments::search_form">  </div>
+         <div class="full-details">
+               <table class="table table-bordered table-striped table-hover table-responsive-xl"> 
+                    <thead class="thead-dark"> 
+                        <tr>                         
+                          <th th:replace="fragments :: column_link('id','ID','none') "> </th>
+                          <th th:replace="fragments :: column_link('firstName','FirstName','none') "/>
+                          <th th:replace="fragments :: column_link('lastName','LastName','none') "/>
+                          <th th:replace="fragments :: column_link('email','Email','none') "/>
+                          <th th:replace="fragments :: column_link('city','City','none') "/>
+                          <th th:replace="fragments :: column_link('state','State','none') "/>
+                          <th th:replace="fragments :: column_link('country','Country','none') "/>
+                          <th th:replace="fragments :: column_link('enabled','Enabled','none') "/>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                          <tr th:each="customer:${listCustomers}"> 
+                               <td>[[${customer.id}]]</td>
+                               <td>[[${customer.firstName}]]</td>
+                               <td>[[${customer.lastName}]]</td>
+                               <td>[[${customer.email}]]</td>
+                               <td>[[${customer.city}]]</td>
+                               <td>[[${customer.state}]]</td>
+                               <td>[[${customer.country.name}]]</td>
+                               <td>
+                                    <div th:replace="fragments :: status(${customer.enabled}, 'customer', '/customers/' + ${customer.id})" />
+                               </td>
+                               <td> 
+                                     <a class="fa-solid fa-file-alt fa-2x icon-green link-detail" th:href="@{'/customers/detail/' + ${customer.id}}" title="view details customer"></a>
+                                     &nbsp;
+                                    <div th:replace="fragments::edit('customer','/customers/edit/' + ${customer.id})"/>
+                                    <div th:replace="fragments::delete('customer',${customer.id},'/customers/delete/' + ${customer.id},true)"/>
+                               </td>
+                          </tr>
+                    </tbody>
+               
+               </table>
+         </div>
+         
+    
+     
+          <div th:replace="modal_fragments:: confirm_modal"></div>
+           <div class="modal fade" id="detailModal">
+             <div class="modal-dialog modal-xl">
+                 <div class="modal-content">
+                 
+                 </div>
+             </div> 
+           </div>
+           <div th:replace="fragments::pagination('customer')"></div>    
+           <div th:replace="fragments::footer"></div>
+   </div> 
+    <script th:src="@{/js/common.js}"></script>
+    <script type="text/javascript">
+    moduleURL = "[[@{/customers}]]";
+    
+    function clearFilter(){
+  	   window.location = "[[@{/customers}]]";
+     }
+    $(document).ready(function(){
+      	$(".link-delete").on("click",function(e){
+      		e.preventDefault();
+      		showDeteleConfirmModal($(this),'product');
+      	});
+      	$(".link-detail").on("click",function(e){
+      		e.preventDefault();
+      		linkDetailURL = $(this).attr("href");
+      		$("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+      	});
+      	$("#dropdownCategory").on("change",function(){
+      		$("#searchForm").submit();
+      	})
+      });
+    
+    </script>
+</body>
+</html>

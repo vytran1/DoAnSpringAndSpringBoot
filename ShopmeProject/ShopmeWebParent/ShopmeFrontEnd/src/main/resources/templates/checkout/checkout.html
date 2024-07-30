@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments:: page_head('Shopping Cart ','none')"> </head>
+<body>
+    <div class="container-fluid"> 
+           
+           <div th:replace="navigation::header_menu"></div>
+           <div th:replace="navigation::search_nav"></div>
+           
+           
+           <div class="text-center">
+             <h2>Checkout</h2>
+            
+           </div>
+           
+           
+           <div class="row m-1">
+                <!-- Start -->
+                <div class="col-sm-8">
+                   <div class="card">
+                       <div class="card-header">
+                          <h5>Shipping information</h5>
+                       </div>
+                       
+                       <div class="card-body">
+                           <p>
+                                <b>Ship to: </b>[[${shippingAddress}]]
+                                <a th:href="@{/address_book(redirect=checkout)}">Ship to another address</a>
+                           </p>
+                           
+                           <p>
+                                <b>Days to delivery:</b>[[${checkoutInfo.deliverDays}]] day(s)
+                           </p>
+                           <p>
+                                <b>Expected deliver date: </b>[[${#dates.format(checkoutInfo.deliverDate,'E, dd MMM yyyy')}]]$
+                           </p>
+                       </div>
+                   </div> 
+                   
+                   
+                   <div class="card mt-3 mb-3">
+                        <div class="card-header">
+                          <h5>Payment Method</h5>
+                       </div>
+                       
+                       <div class="card-body">
+                            <div th:if="${checkoutInfo.codSupported}">
+                                <form th:action="@{/place_order}" method="post">
+                                 <p>
+                                    <input type="radio" name="paymentMethod" id="radioCOD" value="COD"/> Cash on Delivery (COD)
+                                    &nbsp;
+                                    <button class="btn btn-primary d-none" type="submit" id="buttonSubmit" >
+                                         Place order with COD
+                                    </button>
+                                 </p>
+                                </form>
+                            </div>
+                            <div id="paypal-button-container">
+                                 <form th:action="@{/process_paypal_order}" id="paypalForm" method="post">
+                                        <input type="hidden" name="orderId" id="orderId"  >
+                                        <input type="hidden" name="paymentMethod" value="PAYPAL">
+                                 </form>
+                            </div>
+                       </div>
+                   </div>
+                </div>
+                <!-- End -->
+                
+                 <!-- Start -->
+                <div class="col-sm-4">
+                     <div class="card">
+                          <div class="card-header">
+                            <h5>Order Sumary</h5>
+                          </div>
+                          
+                          
+                          <div class="card-body">
+                               <div>
+                                   <table>
+                                        <th:block th:each="cartItem : ${cartItems}"> 
+                                                <tr th:with="product = ${cartItem.product}">
+                                                     <td>[[${cartItem.quantity}]] &nbsp;&nbsp;</td>
+                                                     <td width="70%">
+                                                        <a th:href="@{'/p/' + ${product.alias}}" target="_blank">[[${cartItem.product.shortName}]]</a>
+                                                        <br/>
+                                                        <small>Shipping Cost: 
+                                                             <div th:replace="fragments :: format_currency(${cartItem.shippingCost})"></div>
+                                                         </small>
+                                                     </td>
+                                                     <td>
+                                                            <div th:replace="fragments :: format_currency(${cartItem.subTotal})"></div>
+                                                     </td>
+                                                </tr>
+                                        </th:block>
+                                        <tr>
+                                            <td colspan="3"><hr/></td>
+                                        </tr>
+                                   </table>
+                               </div>
+                               
+                               <div class="row mt-2">
+                                    <div class="col">
+                                         Product Total:
+                                    </div>
+                                    <div class="col">
+                                         <div th:replace="fragments :: format_currency(${checkoutInfo.productTotal})"></div>
+                                    </div>
+                                    
+                                    
+                                   
+                               </div>
+                               
+                               
+                               <div class="row mt-2">
+                                    
+                                     <div class="col">
+                                         Shipping Total:
+                                    </div>
+                                    <div class="col">
+                                         <div th:replace="fragments :: format_currency(${checkoutInfo.shippingCostTotal})"></div>
+                                    </div>
+                               </div>
+                               
+                             <div class="row mt-2">
+                                    
+                                     <div class="col">
+                                         Payment Total:
+                                    </div>
+                                    <div class="col">
+                                         <b>
+                                            <div th:replace="fragments :: format_currency(${checkoutInfo.paymentTotal})"></div>
+                                         </b>
+                                    </div>
+                               </div>
+                                  
+                               
+                          </div>
+                     </div>
+                </div>
+                <!-- End -->
+                
+           </div>
+    </div>
+       
+    <div th:replace="navigation::footer_menu"></div>
+    <script th:src="@{https://www.paypal.com/sdk/js(client-id=${paypalClientId},currency=${currencyCode})}">
+          
+    </script>
+     <script type="text/javascript">
+         var contextPath = "[[@{/}]]";
+         var csrfHeaderName = "[[${_csrf.headerName}]]";
+         var csrfValue = "[[${_csrf.token}]]";
+         var decimalDigits = "[[${DECIMAL_DIGITS}]]";
+ 		 var decimalPointType = "[[${DECIMAL_POINT_TYPE}]]";
+ 	 	 var thousandsPointType = "[[${THOUSANDS_POINT_TYPE}]]";
+ 	 	 var currency_symbol_position = "[[${CURRENCY_SYMBOL_POSITION}]]";
+ 	 	 var currency_symbol = "[[${CURRENCY_SYMBOL}]]";
+ 	 	 
+ 	 	 $(document).ready(function(){
+ 	 		 $("#radioCOD").on("click",function(){
+ 	 			 $("#buttonSubmit").removeClass("d-none");
+ 	 		 })
+ 	 	 })
+ 	 	 
+ 	 	 function validateOrder(orderId){
+ 	 		 $("#orderId").val(orderId);
+ 	 		 $("#paypalForm").submit();
+ 	 	 };
+ 	 	 
+ 	 	 paypal.Buttons({
+ 	 		 createOrder: function(data,actions){
+ 	 			 //set up a transaction
+ 	 			 return actions.order.create({
+ 	 				 enableStandardCardFields: true,
+ 	 				 intent: 'CAPTURE', //make payment immediately
+ 	 				 payer: {
+ 	 					 name: {
+ 	 					    given_name: "[[${customer.firstName}]]",
+ 	 					    surname: "[[${customer.lastName}]]",
+ 	 					 },
+ 	 					 
+ 	 				 
+ 	 				     address:{
+ 	 					     address_line_1: "[[${customer.addressLine1}]]",
+ 	 					     address_line_2: "[[${customer.addressLine2}]]",
+ 	 					     admin_area_1: "[[${customer.state}]]",
+ 	 					     admin_area_2: "[[${customer.city}]]",
+ 	 					     postal_code: "[[${customer.postalCode}]]",
+ 	 					     country_code: "[[${customer.country.code}]]"
+ 	 				     },
+ 	 				     email_address: "[[${customer.email}]]",
+ 	 				     phone: {
+ 	 					     phone_type: "MOBILE",
+ 	 					     phone_number: {
+ 	 						     national_number: "[[${customer.phoneNumber}]]"
+ 	 					     }
+ 	 				     }
+ 	 			  },
+ 	 			  
+ 	 			  purchase_units: [{
+ 	 				  amount: {
+ 	 					  value: "[[${checkoutInfo.paymentTotalForPaypal}]]",
+ 	 					  currency_code: "[[${currencyCode}]]",
+ 	 				  }
+ 	 			  }],
+ 	 			  application_context: {
+ 	 				  shipping_preference: "NO_SHIPPING"
+ 	 			  }
+ 	 			 });
+ 	 		 },
+ 	 	 
+ 	 	     onApprove: function(data,actions){
+ 	 	    	 //buyer approved payment
+ 	 	    	 return actions.order.capture().then(function(details){
+ 	 	    		 //console.log(details);
+ 	 	    		 orderId = details.id;
+ 	 	    		 //totalAmount = details.purchase_units[0].amount.value;
+ 	 	    		 //alert("Transaction completed. Order id: " + orderId + "Amount: " + totalAmount);
+ 	 	    		 
+ 	 	    		 validateOrder(orderId)
+ 	 	    	 })
+ 	 	     },
+ 	 	     
+ 	 	     onCancel: function(data,actions){
+ 	 	    	//buyer cancelled payment
+ 	 	    	alert("Payment Cancel by the buyer")
+ 	 	     },
+ 	 	     
+ 	 	     onError: function(data,actions){
+ 	 	    	// errors that prevent buyer from doing checkout 
+ 	 	    	alert("Something Wrong happen")
+ 	 	     }
+ 	 	 }).render("#paypal-button-container")
+     </script>
+</body>
+</html>

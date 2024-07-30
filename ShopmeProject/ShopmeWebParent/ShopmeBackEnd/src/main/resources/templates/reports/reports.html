@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+     <head th:replace="fragments::page_head('Sales Report','tag')"></head>
+</head>
+<body>
+     <div class="container-fluid">
+           <div th:replace="navigation::menu"></div>
+           <div>
+               <h2>Sales Report</h2>
+           </div>
+             
+            
+             
+              <!-- Start -->
+              <div>
+                   <!-- Nav tabs -->
+                   <ul class="nav nav-tabs"  role="tablist" id="reportTab">
+                     <li class="nav-item">
+                       <a class="nav-link active" data-toggle="tab" href="#date" role="tab" >Sales By Date</a>
+                     </li>
+                     <li class="nav-item">
+                       <a class="nav-link"  data-toggle="tab" href="#category" role="tab" >Sales By Category</a>
+                     </li>
+                     <li class="nav-item">
+                       <a class="nav-link"  data-toggle="tab" href="#product" role="tab" >Sales By Product</a>
+                     </li>
+                   </ul>
+
+                   <!-- Tab panes -->
+                   <div class="tab-content">
+                     <!-- Start -->
+                     <div class="tab-pane active p-3" id="date" role="tabpanel" >
+                        <div th:replace="reports/sales_report_fragment :: content('_date')"></div>
+                     </div>
+                     <!-- End -->
+                     
+                      <!-- Start -->
+                     <div class="tab-pane p-3" id="category" role="tabpanel" >
+                         <div th:replace="reports/sales_report_fragment :: content('_category')"></div>
+                     </div>
+                      <!-- End -->
+                      
+                      <!-- Start -->
+                     <div class="tab-pane " id="product" role="tabpanel" >
+                         <div th:replace="reports/sales_report_fragment :: content('_product')"></div>
+                     </div>
+                     <!-- End -->
+                    
+                   </div>
+              </div>
+              <!-- End -->
+              
+        <div class="toast justify-content-center d-flex" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="3000">
+             <div role="alert" aria-live="assertive" aria-atomic="true">
+                 <div class="toast-body">
+                     <span id="toastMessage"></span>
+                 </div>
+             </div>
+       </div>      
+       <div th:replace="fragments::footer"></div>
+     </div>
+     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+     <script type="text/javascript">
+     contextPath = "[[@{/}]]";
+     var csrfHeaderName = "[[${_csrf.headerName}]]";
+     var csrfValue = "[[${_csrf.token}]]";
+     currencySymbol = "[[${CURRENCY_SYMBOL}]]";
+     thousandPointType = "[[${THOUSANDS_POINT_TYPE == 'COMMA' ? ',' : '.'}]]";
+     decimalPointType = "[[${DECIMAL_POINT_TYPE == 'COMMA' ? ',' : '.'}]]";
+     currencySymbolPosition = "[[${CURRENCY_SYMBOL_POSITION}]]";
+     decimalDigit = "[[${DECIMAL_DIGITS}]]";
+     
+     
+     prefixCurrencySymbol = currencySymbolPosition == 'Before Price' ? currencySymbol : '';
+     suffixCurrencySymbol = currencySymbolPosition == 'After Price' ? currencySymbol : '';
+     
+     
+     $(document).ready(function(){
+    	google.charts.load("current",{'packages':['corechart','table']});
+    	google.charts.setOnLoadCallback(loadSalesReportByDate);
+     })
+     </script>
+     <script type="text/javascript" th:src="@{/js/sales_report_common.js}"></script>
+     <script type="text/javascript" th:src="@{/js/sales_report_by_date.js}"></script>
+     <script type="text/javascript" th:src="@{/js/sales_report_by_category.js}"></script>
+     <script type="text/javascript" th:src="@{/js/sales_report_by_product.js}"></script>
+     <script type="text/javascript" th:src="@{/js/jquery.number.min.js}"></script>
+</body>
+</html>
